@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/bootstrap.min.css}">
+
+        <title>Result</title>
+    </head>
+    <body class="p-3 mb-2 bg-light text-black">
+        <div class="container justify-content-center w-50 p-3" style="margin-top: 5em;">
+
+            <!-- Notes -->
+            <div class="alert alert-success fill-parent" th:if="${statusUpdate==1}" >
+                <h1 class="display-5">Note - Success</h1>
+                <span  >Your changes were successfully saved. Click <a id="resultNoteSuccess" th:href="@{/notes/shownotes}">here</a> to continue.</span>
+            </div>
+            <div class="alert alert-danger fill-parent"th:if="${statusUpdate==0}" >
+                <h1 class="display-5">Error</h1>
+                <span >The note has just already been created. Your changes were not saved. Click <a  th:href="@{/notes/shownotes}">here</a> to continue.</span>
+            </div>
+            <div  class="alert alert-danger fill-parent" th:if="${statusDelete==1}" >
+                <h1 class="display-5">Item Deleted</h1>
+                <span>Click <a th:href="@{/notes/shownotes}">here</a> to continue.</span>
+            </div>
+            <!-- Credentials -->
+
+            <div class="alert alert-success fill-parent" th:if="${updateCredentials==1}" >
+                <h1 class="display-5">Credentials - Success</h1>
+                <span >Your changes were successfully saved. Click <a id="resultCredentialSuccess"  th:href="@{/credentials/showcredentials}">here</a> to continue.</span>
+            </div>
+
+            <div class="alert alert-danger fill-parent"th:if="${updateCredentials==0}" >
+                <h1 class="display-5">Error</h1>
+                <span >The text for the URL field is not in the correct format (www.example.com,https://www.exmplo.com, http://exemple.com).. Click <a th:href="@{/credentials/showcredentials}">here</a> to continue.</span>
+            </div>
+
+
+            <!-- File Upload-->
+            <div class="alert alert-success fill-parent" th:if="${fileUploadSuccess==1}" >
+                <h1 class="display-5">File Upload - Success..!</h1>
+                <span th:text="${fileUploadMessage}"></span>
+                <span >.. Click <a th:href="@{/filesupload/showfiles}">here</a> to continue.</span>
+            </div>
+            <div class="alert alert-success fill-parent" th:if="${fileUploadSuccess==2}" >
+                <h1 class="display-5">File Upload - Success..!</h1>
+                <span >The file was successfully deleted..! Click <a th:href="@{/filesupload/showfiles}">here</a> to continue.</span>
+            </div>
+            <div class="alert alert-danger fill-parent"th:if="${fileUploadSuccess==0}" >
+                <h1 class="display-5">Error loading file...!</h1>
+                <span th:text="${fileUploadMessage}"></span>
+                <span >... Click <a th:href="@{/filesupload/showfiles}">here</a> to continue.</span>
+            </div>
+
+            <!-- Status Code Error -->
+            <div class="alert alert-danger fill-parent"th:if="${statusCode!=0 and statusCode!=null}" >
+                <h1 class="display-5" th:text="'Error Code:    ' + ${statusCode}">Error</h1>
+                <span th:text="${errorMessage}"></span>
+                <span th:text="${sizeError}"></span>
+                <span >.. Click <a th:href="@{/home}">here</a> to continue.</span>
+            </div>
+
+        </div>
+    </body>
+</html>
