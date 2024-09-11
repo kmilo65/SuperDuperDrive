@@ -418,8 +418,8 @@ class CloudStorageApplicationTests {
 		WebDriverWait wait = new WebDriverWait(driver, 50);
 
 		// create Inputs
-		String str = "newcred" +  numberToString(4);
-		String newCredemtialUser = "newuser" +numberToString(2);
+		String str = "newcred" +  numberToString(5);
+		String newCredemtialUser = "newuser" +numberToString(5);
 		String newCredentialUrl = "www.http://" + str + ".com";
 		String newCreddentialPassword = "123" +numberToString(4);
 
@@ -668,8 +668,8 @@ class CloudStorageApplicationTests {
 	public void testRedirection() throws InterruptedException {
 
 		// Create a test account
-		String lastName="Test"+getStringBuilder(3);
-		String userName="user"+numberToString(3);
+		String lastName="Test"+getStringBuilder(5);
+		String userName="user"+numberToString(5);
 		String password=numberToString(5);
 
 		doMockSignUp("Redirection", lastName, userName, password);
