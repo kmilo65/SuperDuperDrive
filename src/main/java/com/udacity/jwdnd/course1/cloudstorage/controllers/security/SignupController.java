@@ -26,7 +26,7 @@ public class SignupController {
     }
 
     @PostMapping()
-    public String signupUser(@ModelAttribute User user, Model model, RedirectAttributes attributes) {
+    public String signupUser(@ModelAttribute User user, Model model) {
         String signupError = null;
 
         if (!userService.isUsernameAvailable(user.getUsername())) {
@@ -42,12 +42,13 @@ public class SignupController {
         }
 
         if (signupError == null) {
-            attributes.addFlashAttribute("signupSuccess", true);
+            model.addAttribute("signupSuccess", true);
+            return  "signup";
         } else {
             model.addAttribute("signupError", signupError);
             return "signup";
         }
 
-        return "redirect:/login";
+
     }
 }
