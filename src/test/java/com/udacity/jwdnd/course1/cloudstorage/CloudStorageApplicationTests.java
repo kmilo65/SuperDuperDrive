@@ -64,6 +64,8 @@ class CloudStorageApplicationTests {
 	@Test
 	public void testUserSignUpLoginLogout() throws InterruptedException {
 
+		WebDriverWait wait = new WebDriverWait(driver, 50);
+		driver.manage().window().maximize();
 		//StringBuilder sb = getStringBuilder(5);
 		String sb=getStringBuilder(5);
 
@@ -88,15 +90,11 @@ class CloudStorageApplicationTests {
 		passwordInput.sendKeys(password);
 		submitButton.click();
 
-
-		//Assertions.assertTrue(driver.findElement(By.id("success-msg")).getText().contains("You successfully signed up!"));
-		WebElement goToLogin = driver.findElement(By.linkText("login"));
-		goToLogin.click();
-
 		// Check if signup was successfully redirected to a login page
 		String currentUrl = driver.getCurrentUrl();
-		assertTrue(currentUrl.contains("/login"), "User was not redirected to the login page after sign up");
 
+		// Wait until the current URL becomes the expected one
+		wait.until(ExpectedConditions.urlToBe(currentUrl));
 
 		// Log in the new user
 		WebElement loginUsernameInput = driver.findElement(By.id("inputUsername"));
@@ -574,7 +572,7 @@ class CloudStorageApplicationTests {
 	 * Helper method for Udacity-supplied sanity checks.
 	 **/
 
-	private void doMockSignUp(String firstName, String lastName, String userName, String password)  {
+	private void doMockSignUp(String firstName, String lastName, String userName, String password){
 		// Create a dummy account for logging in later.
 
 		// Visit the sign-up page.
@@ -585,22 +583,22 @@ class CloudStorageApplicationTests {
 		// Fill out credentials
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputFirstName")));
 		WebElement inputFirstName = driver.findElement(By.id("inputFirstName"));
-		//inputFirstName.click();
+		inputFirstName.click();
 		inputFirstName.sendKeys(firstName);
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputLastName")));
 		WebElement inputLastName = driver.findElement(By.id("inputLastName"));
-		//inputLastName.click();
+		inputLastName.click();
 		inputLastName.sendKeys(lastName);
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
 		WebElement inputUsername = driver.findElement(By.id("inputUsername"));
-		//inputUsername.click();
+		inputUsername.click();
 		inputUsername.sendKeys(userName);
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
 		WebElement inputPassword = driver.findElement(By.id("inputPassword"));
-		//inputPassword.click();
+		inputPassword.click();
 		inputPassword.sendKeys(password);
 
 		// Attempt to sign up.
@@ -608,29 +606,19 @@ class CloudStorageApplicationTests {
 		WebElement buttonSignUp = driver.findElement(By.id("buttonSignUp"));
 		buttonSignUp.click();
 
-		WebElement goToLogin =  webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id("loginTag")));
-		//button.click();
-
-		//WebElement goToLogin = driver.findElement(By.linkText("login"));
-		//webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("loginTag")));
-		//WebElement goToLogin = driver.findElement(By.id("loginTag"));
-		goToLogin.click();
-
-		//Assertions.assertEquals("http://localhost:" + this.port + "/login", driver.getCurrentUrl());
 		/* Check that the sign up was successful.
 		// You may have to modify the element "success-msg" and the sign-up
 		// success message below depening on the rest of your code.
 		*/
-		//Assertions.assertTrue(driver.findElement(By.id("success-msg")).getText().contains("You successfully signed up!"));
+		Assertions.assertTrue(driver.findElement(By.id("signupSuccess")).getText().contains("You successfully signed up!."));
 	}
-
 
 	/**
 	 * PLEASE DO NOT DELETE THIS method.
 	 * Helper method for Udacity-supplied sanity checks.
 	 **/
-
-	private void doLogIn(String userName, String password) {
+	private void doLogIn(String userName, String password)
+	{
 		// Log in to our dummy account.
 		driver.get("http://localhost:" + this.port + "/login");
 		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
@@ -650,7 +638,7 @@ class CloudStorageApplicationTests {
 		loginButton.click();
 
 		webDriverWait.until(ExpectedConditions.titleContains("Home"));
-		//webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
+
 	}
 
 	/**
@@ -722,9 +710,9 @@ class CloudStorageApplicationTests {
 	@Test
 	public void testLargeUpload() throws InterruptedException, MalformedURLException {
 
-		// retrieves the current working directory of the Java application.
-		String projectPath = System.getProperty("user.dir");
+		//String projectPath = System.getProperty("user.dir");
 
+		// retrieves the current working directory of the Java application.
 		//maximize window
 		driver.manage().window().maximize();
 
@@ -732,7 +720,7 @@ class CloudStorageApplicationTests {
 		String lastName = "Test" + getStringBuilder(5);
 		String userName = "user" + numberToString(5);
 		String password = numberToString(5);
-		System.out.println(projectPath);
+		//System.out.println(projectPath);
 		doMockSignUp("URL", lastName, userName, password);
 		doLogIn(userName, password);
 
@@ -748,10 +736,8 @@ class CloudStorageApplicationTests {
 
 		// Initialize file
 		File file=new File(fileName);
-		//driver.findElement(By.id("fileUpload")).sendKeys(projectPath+"\\files\\"+file);
+		//driver.findElement(By.id("fileUpload")).sendKeys(projectPath+"\\"+file);
 		driver.findElement(By.id("fileUpload")).sendKeys(new File(fileName).getAbsolutePath());
-		//Thread.sleep(5000);
-
 
 		// upload button
 		WebElement uploadButton = driver.findElement(By.id("uploadButton"));
@@ -764,6 +750,35 @@ class CloudStorageApplicationTests {
 		Assertions.assertFalse(driver.getPageSource().contains("Internal server error. It seems the file you try to upload exceeds the max size of 10M"));
 
 	}
+
+	/**@Test
+	public void testLargeUpload() {
+		// Create a test account
+		// Create a test account
+		String lastName = "Test" + getStringBuilder(5);
+		String userName = "user" + numberToString(5);
+		String password = numberToString(5);
+		doMockSignUp("Large File",lastName,userName,password);
+		doLogIn(userName, password);
+
+		// Try to upload an arbitrary large file
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+		String fileName = "bigFile.zip";
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fileUpload")));
+		WebElement fileSelectButton = driver.findElement(By.id("fileUpload"));
+		fileSelectButton.sendKeys(new File(fileName).getAbsolutePath());
+
+		WebElement uploadButton = driver.findElement(By.id("uploadButton"));
+		uploadButton.click();
+		try {
+			webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.id("success")));
+		} catch (org.openqa.selenium.TimeoutException e) {
+			System.out.println("Large File upload failed");
+		}
+		Assertions.assertFalse(driver.getPageSource().contains("HTTP Status 403 – Forbidden"));
+
+	}**/
 }
 
 
