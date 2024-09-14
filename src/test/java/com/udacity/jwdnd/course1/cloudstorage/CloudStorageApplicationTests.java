@@ -5,14 +5,28 @@ import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.LocalFileDetector;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
+import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.util.Random;
 
 //import static java.lang.Thread.sleep;
@@ -708,11 +722,11 @@ class CloudStorageApplicationTests {
 	 * https://spring.io/guides/gs/uploading-files/ under the "Tuning File Upload Limits" section.
 	 */
 	@Test
-	public void testLargeUpload() throws InterruptedException, MalformedURLException {
-
-		//String projectPath = System.getProperty("user.dir");
+	public void testLargeUpload() throws InterruptedException, MalformedURLException, NoSuchMethodException, AWTException {
 
 		// retrieves the current working directory of the Java application.
+		String projectPath = System.getProperty("user.dir");
+
 		//maximize window
 		driver.manage().window().maximize();
 
@@ -720,7 +734,7 @@ class CloudStorageApplicationTests {
 		String lastName = "Test" + getStringBuilder(5);
 		String userName = "user" + numberToString(5);
 		String password = numberToString(5);
-		//System.out.println(projectPath);
+		System.out.println(projectPath);
 		doMockSignUp("URL", lastName, userName, password);
 		doLogIn(userName, password);
 
@@ -736,8 +750,10 @@ class CloudStorageApplicationTests {
 
 		// Initialize file
 		File file=new File(fileName);
-		//driver.findElement(By.id("fileUpload")).sendKeys(projectPath+"\\"+file);
+		//driver.findElement(By.id("fileUpload")).sendKeys(projectPath+"\\files\\"+file);
 		driver.findElement(By.id("fileUpload")).sendKeys(new File(fileName).getAbsolutePath());
+		//Thread.sleep(5000);
+
 
 		// upload button
 		WebElement uploadButton = driver.findElement(By.id("uploadButton"));
@@ -747,38 +763,10 @@ class CloudStorageApplicationTests {
 		} catch (org.openqa.selenium.TimeoutException e) {
 			System.out.println("Large File upload failed");
 		}
-		Assertions.assertFalse(driver.getPageSource().contains("Internal server error. It seems the file you try to upload exceeds the max size of 10M"));
+		Assertions.assertFalse(driver.getPageSource().contains("Error Code: 500"));
 
 	}
 
-	/**@Test
-	public void testLargeUpload() {
-		// Create a test account
-		// Create a test account
-		String lastName = "Test" + getStringBuilder(5);
-		String userName = "user" + numberToString(5);
-		String password = numberToString(5);
-		doMockSignUp("Large File",lastName,userName,password);
-		doLogIn(userName, password);
-
-		// Try to upload an arbitrary large file
-		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
-		String fileName = "bigFile.zip";
-
-		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fileUpload")));
-		WebElement fileSelectButton = driver.findElement(By.id("fileUpload"));
-		fileSelectButton.sendKeys(new File(fileName).getAbsolutePath());
-
-		WebElement uploadButton = driver.findElement(By.id("uploadButton"));
-		uploadButton.click();
-		try {
-			webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.id("success")));
-		} catch (org.openqa.selenium.TimeoutException e) {
-			System.out.println("Large File upload failed");
-		}
-		Assertions.assertFalse(driver.getPageSource().contains("HTTP Status 403 – Forbidden"));
-
-	}**/
 }
 
 
